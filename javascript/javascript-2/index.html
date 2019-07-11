@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+function promiseReduce(asyncFunctions, reduce, initialValue) {
+	return asyncFunctions.reduce((PromiseResult1, PromiseResult2) => {
+		return PromiseResult1.then(fulfilled1 =>
+    PromiseResult2.then( fulfilled2 =>
+			reduce(fulfilled1, fulfilled2) 
+		  )
+		);
+   }, 
+   Promise.resolve(initialValue)).then(null, function() {
+   throw ('error')
+   })
+	
+}
+const fn1 = () => {
+console.log('fn1')
+return Promise.resolve(1)
+}
+
+const fn2 = () => new Promise(resolve => {
+console.log('fn2')
+setTimeout(() => resolve(2), 1000)
+})
+
+const fun = function(memo,value) {
+		console.log('reduce')
+  	return memo * value
+  }
+  promiseReduce([fn1(), fn2()], fun, 1).then(function(res,rej) {
+  console.log(res)
+  });
+    </script>
+</body>
+</html>
